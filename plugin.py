@@ -661,33 +661,8 @@ class Sigyn(callbacks.Plugin,plugins.ChannelDBHandler):
             return self.cache[prefix]
         (nick,ident,host) = ircutils.splitHostmask(prefix)
         if '/' in host:
-            if host.startswith('gateway/web/freenode'):
-                if 'ip.' in host:
-                    self.cache[prefix] = '*@%s' % host.split('ip.')[1]
-                else:
-                    # syn offline / busy
-                    self.cache[prefix] = '%s@gateway/web/freenode/*' % ident
-            elif host.startswith('gateway/tor-sasl'):
+            if host.startswith('gateway/tor-sasl'):
                 self.cache[prefix] = '*@%s' % host
-            elif host.startswith('gateway'):
-                h = host.split('/')
-                if 'ip.' in host:
-                    ident = '*'
-                    h = host.split('ip.')[1]
-                elif '/vpn/' in host:
-                    if 'x-' in host:
-                        h = h[:3]
-                        h = '%s/*' % '/'.join(h)
-                    else:
-                        h = host
-                    if ident.startswith('~'):
-                        ident = '*'
-                elif len(h) > 3:
-                    h = h[:3]
-                    h = '%s/*' % '/'.join(h)
-                else:
-                    h = host
-                self.cache[prefix] = '%s@%s' % (ident,h)
             elif host.startswith('nat'):
                 h = host.split('/')
                 h = h[:2]
@@ -1003,7 +978,7 @@ class Sigyn(callbacks.Plugin,plugins.ChannelDBHandler):
         try:
             (targets,text) = msg.args
             i = self.getIrc(irc)
-            reg = r".*\s+([a-z]+)\.freenode\.net.*:\s+(\d{2,6})\s+"
+            reg = r".*\s+([a-z]+)\.ekinetirc\.com.*:\s+(\d{2,6})\s+"
             result = re.match(reg,text)
             if result:
                 i.servers[result.group(1)] = int(result.group(2))
@@ -1021,7 +996,7 @@ class Sigyn(callbacks.Plugin,plugins.ChannelDBHandler):
         server = None
         if found:
             i.servers = {}
-            server = '%s.freenode.net' % found
+            server = '%s.ekinetirc.com' % found
             i.servers[server] = time.time()
             def bye():
                 i = self.getIrc(irc)
@@ -1562,7 +1537,7 @@ class Sigyn(callbacks.Plugin,plugins.ChannelDBHandler):
             channels = list(queue)
             queue.reset()
             if not key in i.queues[user]:
-                self.logChannel(irc,'NOTE: %s is crawling freenode (%s)' % (user,', '.join(channels)))
+                self.logChannel(irc,'NOTE: %s is crawling ekinetirc (%s)' % (user,', '.join(channels)))
                 def rc():
                     i = self.getIrc(irc)
                     if user in i.queues:
@@ -2081,12 +2056,6 @@ class Sigyn(callbacks.Plugin,plugins.ChannelDBHandler):
                         t = world.SupyThread(target=fillDnsbl,name=format('fillDnsbl %s', ip),args=(ip,self.registryValue('droneblHost'),self.registryValue('droneblKey')))
                         t.setDaemon(True)
                         t.start()
-                else:
-                    if '#freenode' in irc.state.channels and 'm' in irc.state.channels['#freenode'].modes and prefix.split('!')[0] in irc.state.channels['#freenode'].users:
-                        if 'eir' in irc.state.channels['#freenode'].ops:
-                            match = '*!*@%s' % prefix.split('@')[1]
-                            irc.queueMsg(ircmsgs.privmsg('eir','add %s %s %s' % (match,self.registryValue('eirDuration'),message)))
-                    self.logChannel(irc,"EFNET: [%s] %s (%s)" % (channel,prefix,message))
         else:
             i.digs[ip] = False
         key = 'dig %s' % ip
@@ -2138,10 +2107,6 @@ class Sigyn(callbacks.Plugin,plugins.ChannelDBHandler):
                             if (i.efnet or i.defcon):
                                 log = 'BAD: [%s] %s (%s - EFNET) -> %s' % (channel,prefix,i.digs[ip],mask)
                                 self.ban(irc,msg.nick,prefix,mask,self.registryValue('klineDuration'),'efnet',self.registryValue('klineMessage'),log)
-                            else:
-                                if channel == '#freenode' and msg.nick in irc.state.channels[channel].users and 'm' in irc.state.channels[channel].modes and 'eir' in irc.state.channels[channel].ops:
-                                    match = '*!*@%s' % msg.prefix.split('@')[1]
-                                    irc.queueMsg(ircmsgs.privmsg('eir','add %s %s %s' % (match,self.registryValue('eirDuration'),i.digs[ip])))
                     else:
                         key = 'dig %s' % ip
                         if not key in i.pending:

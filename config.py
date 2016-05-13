@@ -63,9 +63,9 @@ conf.registerGlobalValue(Sigyn,'resolverTimeout',
 conf.registerGlobalValue(Sigyn, 'klineDuration',
      registry.Integer(-1, """kline duration, in minutes, with -1, bot will not kill or kline"""))
 conf.registerGlobalValue(Sigyn, 'klineMessage',
-     registry.String("Please do not spam users or channels on freenode. If in error, please contact kline@freenode.net.", """default reason used in kline's message"""))
+     registry.String("Merci de ne pas spammer les utilisateurs d'EkiNetIrc. En cas d'erreur, contactez kline@ekinetirc.com.", """default reason used in kline's message"""))
 conf.registerChannelValue(Sigyn, 'killMessage',
-     registry.String("Spam is off topic on freenode.", """kill reason"""))
+     registry.String("Le spam est interdit sur EkiNetIrc", """kill reason"""))
      
 conf.registerGlobalValue(Sigyn, 'operatorNick',
      registry.String("", """oper's nick, must be filled""", private=True))
@@ -176,7 +176,7 @@ conf.registerChannelValue(Sigyn, 'brokenLife',
 conf.registerChannelValue(Sigyn, 'brokenDuration',
     registry.PositiveInteger(1,"""kline duration in minutes"""))
 conf.registerChannelValue(Sigyn, 'brokenReason',
-    registry.String("Your irc client seems broken and is flooding lots of channels. Banned for %s min, if in error, please contact kline@freenode.net.","""kline reason"""))
+    registry.String("Votre client IRC semble avoir un probleme et flood certains cannaux. Banni pour %s min. En cas d'erreur, contactez kline@ekinetirc.com.","""kline reason"""))
 conf.registerChannelValue(Sigyn, 'brokenHost',
     registry.CommaSeparatedListOfStrings([''], """list of knowns broken host"""))
 
@@ -218,7 +218,7 @@ conf.registerChannelValue(Sigyn, 'floodMinimum',
     registry.PositiveInteger(1,"""minimun number of chars to enter flood detection"""))
 
 conf.registerChannelValue(Sigyn, 'lowFloodPermit',
-    registry.Integer(-1,"""number of messages allowed during lowFoodLife, -1 to disable"""))
+    registry.Integer(-1,"""number of messages allowed during lowFloodLife, -1 to disable"""))
 conf.registerChannelValue(Sigyn, 'lowFloodLife',
     registry.PositiveInteger(1,"""life duration of message in the lowFlood buffer detection"""))
 
