@@ -662,7 +662,7 @@ class Sigyn(callbacks.Plugin,plugins.ChannelDBHandler):
         (nick,ident,host) = ircutils.splitHostmask(prefix)
         if '/' in host:
             if host.startswith('gateway/tor-sasl'):
-                self.cache[prefix] = '*@%s' % host
+                self.cache[prefix] = '%s@gateway/tor-sasl/*' % ident
             elif host.startswith('nat'):
                 h = host.split('/')
                 h = h[:2]
